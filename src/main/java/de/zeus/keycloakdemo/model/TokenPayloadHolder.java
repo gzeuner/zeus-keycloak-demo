@@ -1,4 +1,4 @@
-package de.zeus.keycloakdemo;
+package de.zeus.keycloakdemo.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.context.annotation.RequestScope;

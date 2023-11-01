@@ -1,4 +1,4 @@
-package de.zeus.keycloakdemo;
+package de.zeus.keycloakdemo.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;

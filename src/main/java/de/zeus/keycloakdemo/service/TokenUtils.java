@@ -1,4 +1,4 @@
-package de.zeus.keycloakdemo;
+package de.zeus.keycloakdemo.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import de.zeus.keycloakdemo.exception.ClientNotFoundException;
+import de.zeus.keycloakdemo.exception.InvalidTokenException;
+import de.zeus.keycloakdemo.exception.PayloadParseException;
+import de.zeus.keycloakdemo.model.TokenPayloadHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -252,30 +256,4 @@ public class TokenUtils {
         }
     }
 
-    public void setPayload(JsonNode payload) {
-        tokenPayloadHolder.setPayload(payload);
-    }
-
-    public JsonNode getPayload() {
-        return tokenPayloadHolder.getPayload();
-    }
-
-    // Custom exception for payload parsing
-    public static class PayloadParseException extends RuntimeException {
-        public PayloadParseException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    public static class ClientNotFoundException extends RuntimeException {
-        public ClientNotFoundException(String message) {
-            super(message);
-        }
-    }
-
-    public static class InvalidTokenException extends RuntimeException {
-        public InvalidTokenException(String message) {
-            super(message);
-        }
-    }
 }
