@@ -39,25 +39,35 @@ public class TokenUtils {
     @Autowired
     private TokenPayloadHolder tokenPayloadHolder;
 
+    // Constructor for TokenUtils class
     public TokenUtils(OAuth2AuthorizedClientService authorizedClientService) {
         this.authorizedClientService = authorizedClientService;
 
     }
 
-    // Load the payload from a user's token
+    // Loads the payload data from a user's access token
     public void loadPayload(String userName) {
         OAuth2AuthorizedClient client = loadAuthorizedClient(userName);
 
         if (client != null) {
             Optional<JsonNode> payloadOpt = parsePayload(getPayloadFromAccessToken(client.getAccessToken().getTokenValue()));
             payloadOpt.ifPresent(tokenPayloadHolder::setPayload);
+
+            // Trigger additional logging if enabled
+            if (printUserRolesAndAuthoritiesEnabled) {
+                printUserRolesAndAuthorities();
+            }
+            if (printTokensEnabled) {
+                printTokens();
+            }
         } else {
-            log.error("No client found for user: {}", userName);
-            throw new ClientNotFoundException("No client found for user: " + userName);
+            String errMsg = "No client found for user: " + userName;
+            log.error(errMsg);
+            throw new ClientNotFoundException(errMsg);
         }
     }
 
-    // Auxiliary method to retrieve the stored payload.
+    // Fetches the stored payload, loading it if necessary
     private Optional<JsonNode> getCurrentPayload() {
         if (tokenPayloadHolder.getPayload() == null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -68,29 +78,28 @@ public class TokenUtils {
         return Optional.ofNullable(tokenPayloadHolder.getPayload());
     }
 
-    // Parse the payload and throw a custom exception on failure
+    // Parses the payload and throws an exception if parsing fails
     private Optional<JsonNode> parsePayload(Optional<String> payloadOpt) {
-        if (payloadOpt.isEmpty()) {
-            log.warn("Empty payload provided.");
-            return Optional.empty();
-        }
-        String payload = payloadOpt.get();
-        try {
-            byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
-            String payloadJson = new String(decodedPayload, StandardCharsets.UTF_8);
-            return Optional.of(objectMapper.readTree(payloadJson));
-        } catch (IOException e) {
-            log.error("Could not parse payload", e);
-            throw new PayloadParseException("Could not parse payload", e);
-        }
+        return payloadOpt.flatMap(payload -> {
+            try {
+                byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
+                String payloadJson = new String(decodedPayload, StandardCharsets.UTF_8);
+                return Optional.of(objectMapper.readTree(payloadJson));
+            } catch (IOException e) {
+                String errMsg = "Could not parse payload";
+                log.error(errMsg, e);
+                throw new PayloadParseException(errMsg, e);
+            }
+        });
     }
 
-    // Get the payload part from the token
+    // Extracts the payload section from the access token
     private Optional<String> getPayloadFromAccessToken(String accessTokenValue) {
         String[] parts = accessTokenValue.split("\\.");
         if (parts.length != 3) {
-            log.error("Invalid token format");
-            throw new InvalidTokenException("Invalid token format");
+            String errMsg = "Invalid token format";
+            log.error(errMsg);
+            throw new InvalidTokenException(errMsg);
         }
         return Optional.of(parts[1]);
     }
