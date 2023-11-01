@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,11 +22,10 @@ import org.springframework.stereotype.Component;
 public class TokenUtils {
 
     public static final String REALM_ACCESS = "realm_access";
-    public static final String ROLES = "roles";
     public static final String RESOURCE_ACCESS = "resource_access";
+    public static final String ROLES = "roles";
     private final OAuth2AuthorizedClientService authorizedClientService;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final ThreadLocal<Optional<JsonNode>> currentPayload = ThreadLocal.withInitial(Optional::empty);
 
     @Value("${spring.security.oauth2.client.registration.external.provider}")
     private String externalOauth2Provider;
@@ -36,17 +36,21 @@ public class TokenUtils {
     @Value("${token.utils.printTokens}")
     private boolean printTokensEnabled;
 
+    @Autowired
+    private TokenPayloadHolder tokenPayloadHolder;
+
     public TokenUtils(OAuth2AuthorizedClientService authorizedClientService) {
         this.authorizedClientService = authorizedClientService;
 
     }
 
     // Load the payload from a user's token
-    public Optional<JsonNode> loadPayload(String userName) {
+    public void loadPayload(String userName) {
         OAuth2AuthorizedClient client = loadAuthorizedClient(userName);
 
         if (client != null) {
-            return parsePayload(getPayloadFromAccessToken(client.getAccessToken().getTokenValue()));
+            Optional<JsonNode> payloadOpt = parsePayload(getPayloadFromAccessToken(client.getAccessToken().getTokenValue()));
+            payloadOpt.ifPresent(tokenPayloadHolder::setPayload);
         } else {
             log.error("No client found for user: {}", userName);
             throw new ClientNotFoundException("No client found for user: " + userName);
@@ -55,31 +59,13 @@ public class TokenUtils {
 
     // Auxiliary method to retrieve the stored payload.
     private Optional<JsonNode> getCurrentPayload() {
-        ensureCurrentUserPayloadIsLoaded();
-        if(printUserRolesAndAuthoritiesEnabled) {
-            printUserRolesAndAuthorities();
-        }
-        if(printTokensEnabled) {
-            printTokens();
-        }
-        Optional<JsonNode> payload = currentPayload.get();
-        if (payload.isEmpty()) {
-            log.warn("No payload is currently loaded");
-        }
-        return payload;
-    }
-
-    // This method ensures that the payload is set in the ThreadLocal.
-    private void ensureCurrentUserPayloadIsLoaded() {
-        if (currentPayload.get().isEmpty()) {
+        if (tokenPayloadHolder.getPayload() == null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null) {
-                Optional<JsonNode> payload = loadPayload(auth.getName());
-                currentPayload.set(payload);
-            } else {
-                currentPayload.set(Optional.empty());
+                loadPayload(auth.getName());
             }
         }
+        return Optional.ofNullable(tokenPayloadHolder.getPayload());
     }
 
     // Parse the payload and throw a custom exception on failure
@@ -171,7 +157,7 @@ public class TokenUtils {
 
     // Prints out the user roles and authorities
     public void printUserRolesAndAuthorities() {
-        Optional<JsonNode> optPayload = currentPayload.get();
+        Optional<JsonNode> optPayload = getCurrentPayload();
         String userName = getCurrentUserName(optPayload.orElse(null));
 
         // Wenn Payload vorhanden, dann drucke Rollen aus
@@ -255,6 +241,14 @@ public class TokenUtils {
         for (JsonNode role : rolesNode) {
             log.info(messagePrefix + role.asText());
         }
+    }
+
+    public void setPayload(JsonNode payload) {
+        tokenPayloadHolder.setPayload(payload);
+    }
+
+    public JsonNode getPayload() {
+        return tokenPayloadHolder.getPayload();
     }
 
     // Custom exception for payload parsing
