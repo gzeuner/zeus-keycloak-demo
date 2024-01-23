@@ -46,6 +46,39 @@
   "roles": {
     "realm": [
       {
+        "id": "eee2769f-8091-4807-9087-ea20fb948705",
+        "name": "admin",
+        "description": "Admin-Role",
+        "composite": true,
+        "composites": {
+          "client": {
+            "athen": [
+              "client_admin",
+              "client_user"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "839aa3be-80be-40da-95a4-a67ebd293af4",
+        "attributes": {}
+      },
+      {
+        "id": "5cf7d808-e0c6-4df6-9ad8-40e03c227484",
+        "name": "user",
+        "description": "User-Role",
+        "composite": true,
+        "composites": {
+          "client": {
+            "athen": [
+              "client_user"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "839aa3be-80be-40da-95a4-a67ebd293af4",
+        "attributes": {}
+      },
+      {
         "id": "4ee2ca68-636d-411c-98d4-93b684e52f73",
         "name": "uma_authorization",
         "description": "${role_uma_authorization}",
@@ -298,7 +331,26 @@
           "attributes": {}
         }
       ],
-      "athen": [],
+      "athen": [
+        {
+          "id": "a7ed2134-50b3-412b-9fcc-cb8318b97598",
+          "name": "client_admin",
+          "description": "Client Admin Role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "da10f100-3e28-40af-8962-29bba4e95fb8",
+          "attributes": {}
+        },
+        {
+          "id": "29b90e8d-865e-4130-9f59-36331d64a6cd",
+          "name": "client_user",
+          "description": "Client User Role",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "da10f100-3e28-40af-8962-29bba4e95fb8",
+          "attributes": {}
+        }
+      ],
       "security-admin-console": [],
       "admin-cli": [],
       "account-console": [],
@@ -424,8 +476,8 @@
   "otpPolicyCodeReusable": false,
   "otpSupportedApplications": [
     "totpAppMicrosoftAuthenticatorName",
-    "totpAppFreeOTPName",
-    "totpAppGoogleName"
+    "totpAppGoogleName",
+    "totpAppFreeOTPName"
   ],
   "webAuthnPolicyRpEntityName": "keycloak",
   "webAuthnPolicySignatureAlgorithms": [
@@ -652,6 +704,37 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "418191a6-cbfb-4a2e-9971-1fbbe9e46c09",
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "foo",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String",
+            "multivalued": "true"
+          }
+        },
+        {
+          "id": "b5eb30ab-a79c-4c0b-b744-3a25cae49f4a",
+          "name": "birthdate",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "birthdate",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "birthdate",
+            "jsonType.label": "String"
+          }
+        }
+      ],
       "defaultClientScopes": [
         "web-origins",
         "acr",
