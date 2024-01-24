@@ -30,8 +30,8 @@ Informationen zur Verbindung und Konfiguration der Anwendung mit einem Keycloak-
 ## Lizenz
 Dieses Projekt steht unter der Apache License 2.0. Weitere Informationen finden Sie in der [LICENSE](LICENSE)-Datei.
 
-## Mitwirken
-Beiträge sind willkommen! Bitte lesen Sie unsere [CONTRIBUTING](CONTRIBUTING.md)-Richtlinien, um mehr über den Beitragungsprozess zu erfahren.
+## Haftungsausschluss
+Dieser Code wird in der vorliegenden Form ohne jegliche Garantie zu Trainingszwecken zur Verfügung gestellt.
 
 ## Weitere Ressourcen
 Besuchen Sie [tiny-tool.de](https://www.tiny-tool.de) für weitere nützliche Entwicklertools und Ressourcen.
@@ -69,6 +69,9 @@ Information on connecting and configuring the application with a Keycloak server
 
 ## License
 This project is under the Apache License 2.0. For more information, see the [LICENSE](LICENSE) file.
+
+## Discclaimer
+This code is provided in its present form without any guarantee for training purposes.
 
 ## Authors and Acknowledgements
 Visit https://www.tiny-tool.de
