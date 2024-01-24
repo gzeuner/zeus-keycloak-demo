@@ -70,7 +70,7 @@ Information on connecting and configuring the application with a Keycloak server
 ## License
 This project is under the Apache License 2.0. For more information, see the [LICENSE](LICENSE) file.
 
-## Discclaimer
+## Disclaimer
 This code is provided in its present form without any guarantee for training purposes.
 
 ## Authors and Acknowledgements
