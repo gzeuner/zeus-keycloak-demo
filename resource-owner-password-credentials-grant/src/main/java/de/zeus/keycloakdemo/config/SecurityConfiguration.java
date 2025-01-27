@@ -15,7 +15,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Value("${logout.success.url}")
+    @Value("${keycloak.logout.url}")
     private String logoutSuccessUrl;
 
     @Value("${spring.security.oauth2.client.provider.external.issuer-uri}")

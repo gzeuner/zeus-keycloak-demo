@@ -1,30 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Endpoint Buttons</title>
-    <script>
-        function goToEndpoint(endpoint) {
-            window.open(endpoint, '_self');
-        }
-    </script>
 </head>
 <body>
 
-<h1>Choose an Endpoint:</h1>
+<h1>Wähle einen Endpunkt / Choose an Endpoint:</h1>
 
-<button onclick="goToEndpoint('/public')">Public Endpoint</button><br><br>
+<!-- Buttons for different endpoints -->
+<button onclick="window.open('/public', '_self')">Öffentlicher Endpunkt / Public Endpoint</button><br><br>
+<button onclick="window.open('/secured', '_self')">Gesicherter Endpunkt / Secured Endpoint</button><br><br>
+<button onclick="window.open('/realm-admin-realm-user-only', '_self')">Nur für Realm-Benutzer und -Admins / Realm-User and Realm Admin Only Endpoint</button><br><br>
+<button onclick="window.open('/realm-admin-only', '_self')">Nur für Realm-Admins / Realm-Admin Only Endpoint</button><br><br>
+<button onclick="window.open('/resource-admin-only', '_self')">Nur für Ressourcen-Admins / Resource-Admin Only Endpoint</button><br><br>
+<button onclick="window.open('/composite-role-endpoint', '_self')">Zusammengesetzte Rollen-Endpunkt / Composite Role Endpoint</button><br><br>
 
-<button onclick="goToEndpoint('/secured')">Secured Endpoint</button><br><br>
+<!-- Logout -->
+<button onclick="window.open('/logout', '_self')">Abmelden - [ Bestätigung erforderlich ] / Logout - [ Confirmation Required ]</button><br><br>
 
-<button onclick="goToEndpoint('/realm-admin-realm-user-only')">Realm-User and Realm Admin Only Endpoint</button><br><br>
-
-<button onclick="goToEndpoint('/realm-admin-only')">Realm-Admin Only Endpoint</button><br><br>
-
-<button onclick="goToEndpoint('/resource-admin-only')">Resource-Admin Only Endpoint</button><br><br>
-
-<button onclick="goToEndpoint('/composite-role-endpoint')">Composite Role Endpoint</button><br><br>
-
-<button onclick="goToEndpoint('/logout')">Logout</button>
+<!-- Logout without confirmation -->
+<button onclick="window.open('/logoutWithoutConfirmation', '_self')">Abmelden - [ Ohne Bestätigung ] / Logout - [ Without Confirmation ]</button>
 
 </body>
 </html>
